@@ -10,33 +10,33 @@ user_backup="./backup/shell_config[$USER]"
 root_backup="./backup/shell_config[root]"
 
 #Some useful functions to make the code readable
-function c() {
-	clear
-}
-
-function br() {
-	echo -e
-}
-
-function load() {
-	cat "$1" >>"$2"
-}
-
-function reload() {
-	source "$1"
-}
-
-function save() {
-	cat "$1" >"$2"
-}
-
-function delete() {
-	rm -rf "$1"
-}
-
-function sudo_check() {
-	sudo -n true 2>/dev/null
-}
+# function c() {
+# 	clear
+# }
+#
+# function br() {
+# 	echo -e
+# }
+#
+# function load() {
+# 	cat "$1" >>"$2"
+# }
+#
+# function reload() {
+# 	source "$1"
+# }
+#
+# function save() {
+# 	cat "$1" >"$2"
+# }
+#
+# function delete() {
+# 	rm -rf "$1"
+# }
+#
+# function sudo_check() {
+# 	sudo -n true 2>/dev/null
+# }
 
 # function check(){ if [ -n $android ]; then eval "$@"; fi}
 # function ask(){}
