@@ -1,0 +1,529 @@
+
+################################################
+#                _              _   _          #
+#          ___  | |__     ___  | | | |         #
+#         / __| | '_ \   / _ \ | | | |         #
+#         \__ \ | | | | |  __/ | | | |         #
+#         |___/ |_| |_|  \___| |_| |_|         #
+#           _   _                              #
+#    __ _  | | (_)   __ _   ___    ___   ___   #
+#   / _` | | | | |  / _` | / __|  / _ \ / __|  #
+#  | (_| | | | | | | (_| | \__ \ |  __/ \__ \  #
+#   \__,_| |_| |_|  \__,_| |___/  \___| |___/  #
+#                                              #
+################################################
+
+# writen by : h471x
+# mail      : hatixntsoa@gmail.com
+# github    : https://github.com/h471x
+
+
+################################################
+
+# Section 1 : Basics
+
+#this alias to clear
+alias c="clear"
+
+#this alias to quit
+alias q="exit"
+
+#this alias to break lines
+alias br="br"
+
+#this function for br alias
+function br(){
+  if [[ $# -eq 1 ]]; then
+    for ((i=1; i<=$1; i++)); do
+      echo -e;
+    done
+  elif [[ $# -eq 0 ]]; then
+    echo -e;
+  fi
+}
+
+#this alias to go back from a directory
+alias b="b"
+
+#this function for b alias
+function b(){
+  if [[ $# -eq 0 ]]; then
+    cd ..
+  else
+    for ((i=1; i<=$1;i++)); do
+      cd ..
+    done
+  fi
+  cv;
+}
+
+#this alias to go to the last directory
+alias ld="cd - && cv;"
+
+#this alias to go to home directory
+alias hm="cd && cv"
+
+
+################################################
+
+# Section 2 : Directories & files 
+
+# this alias to have the current view  
+# of working directory content using ls
+alias cv="cv"
+
+#this function for cv alias
+function cv(){
+  local target="$1"
+  local folder_name=$(basename "${target:-$PWD}")
+  local folder_count=$(ls -1 "${target:-$PWD}" | wc -l)
+
+  c && br;
+  echo "   $folder_name folder content ($folder_count) :";
+  br;
+  ls --color=auto "${target:-$PWD}";
+  br;
+}
+
+#this alias to view the current directory with grep specifications
+alias cvg="cvg"
+
+#this function for cv alias
+function cvg(){
+  c && br;
+  if [[ $# -eq 1 ]]; then
+    echo "   $(basename "$PWD") folder content with "$1" : ";
+    br && ls | grep "$1" && br;
+  elif [[ $# -eq 0 ]]; then
+    cv;
+  fi
+}
+
+# this alias to count the number of files/directories
+# inside a folder
+alias dc="dc"
+
+#this function for dc alias
+function dc(){
+  if [[ $# -eq 0 ]]; then
+    clear;
+    br;
+    case "$(ls -1 | wc -l)" in
+      0)
+        br;
+        echo "There is nothing inside $(basename $PWD)";
+        br;;
+      *)
+        case "$(ls -1 | wc -l)" in
+          1)it="item";;
+          *)it="items";;
+        esac
+        echo "   $(basename $PWD) folder has $(ls -1 | wc -l) $it : ";
+        br;
+        if [[ $(ls -1 | wc -l) -gt 50 ]]; then
+          br;
+        else
+          ls --color=auto
+        fi
+        br;
+    esac
+  elif [[ $# -eq 1 ]]; then
+    clear;
+    br;
+    case "$(ls -1 $1 | wc -l)" in
+      0)
+        br;
+        echo "There is nothing inside $(basename $1)";
+        br;
+        sleep 1;
+        cv;
+        br;;
+      *)
+        case "$(ls -1 $1 | wc -l)" in
+          1)it="item";;
+          *)it="items";;
+        esac
+        echo "   $(basename $1) folder has $(ls -1 $1 | wc -l) $it : ";
+        br;
+        if [[ $(ls -1 "$1" | wc -l) -gt 50 ]]; then
+          br;
+        else
+          ls --color=auto "$1";
+        fi
+        br;
+        sleep 1;
+        cv;
+    esac
+  fi
+}
+
+#this alias to allow a file/directory full permission 
+alias all="all"
+
+#this function for all alias
+function all(){
+  if [[ $# -eq 0 ]]; then
+  chmod 777 *;
+  else
+    chmod 777 "$@";
+  fi
+  cv;
+}
+
+#this alias to open a directory
+alias op="op"
+
+#this function for op alias
+function op(){
+  if [[ -d "$1" ]]; then
+    if [[ "$#" -eq 1 ]]; then
+      cd "$1" && cv;
+    elif [[ "$#" -eq 2 ]]; then
+      cd "$1" && cvg "$2";
+    fi
+  elif [[ -f "$1" ]]; then
+    vf "$1"
+  fi
+}
+
+#this line to count line and words inside a file
+alias flc="flc"
+
+#this function for the flc alias
+function flc(){
+  if [[ -f "$1" ]]; then
+    if [ -z "$1" ]; then
+      echo "Please provide a filename"
+    elif [ -z "$2" ]; then
+      c && br;
+      echo -ne " ==> " && file "$1";
+      echo -ne " ==> " && wc -l "$1" | awk '{print $1, "lines"}';
+      echo -ne " ==> " && wc -w "$1" | awk '{print $1, "words"}';
+      br;
+    else
+      grep -c "$1" "$2" | awk -v var="$1" '{print $1, var, "in it"}'
+    fi
+  elif [[ -d "$1" ]]; then
+    dc "$1";
+  fi
+}
+
+#this line to have destination location for copy / cut
+alias dt="dt"
+
+#this function for dst alias
+function dt(){
+  dest="$PWD" && c && br;
+  echo "    d e s t   s a v e d";
+  sleep 0.6 && cv;
+}
+
+#this alias to open a directory and make it as destination
+alias opd="opd"
+
+#this function for opd alias
+function opd(){
+  op "$1" && dt && ld;
+}
+
+
+
+################################################
+
+# Section 3 : CRUD
+
+# Note that this are simple commands but
+# just have the 'cv' alias implementation
+# which shows any changes after CRUD-ing
+
+#this alias to create a file
+alias tf="tf"
+
+#this function for tf alias
+function tf(){
+  touch "$@";
+  all "$@";
+  cv;
+}
+
+#this alias to create a directory
+alias cdr="cdr"
+
+#this function for cdr alias
+function cdr(){
+  mkdir "$@";
+  cv;
+}
+
+#this alias to create a directory
+#and then directly enter to it
+alias opdr="opdr"
+
+#this function for opdr alias
+function opdr(){
+  cdr "$1" && op "$1";
+}
+
+#this alias to view inside a file
+alias vf="vf"
+
+#this function for vf alias
+function vf(){
+  #detects if the argument is a file
+  if [[ -f "$1" ]]; then
+    case "${1##*.}" in
+      # uncomment the following lines 
+      # if you have those programms installed
+      #JPG || jpg || ico || png)
+      #  ristretto "$1" && cv;;
+      #pdf)
+      #  atril "$1" && cv;;
+      #cap || pcapng)
+      #  wireshark "$1" && cv;;
+      #csv || ods || xlsx)
+      #  xdg-open "$1" && cv;;
+      #mp*)
+      #  vlc "$1" && cv;;
+      #gz || rar)
+      #  engrampa "$1" && cv;;
+      #html || c || cpp || tf || py || java || js || css || json)
+      #  code "$1" && cv;;
+      *)
+        case "$#" in
+          1)cat "$1" | less && cv;;
+          2)cat "$1" | grep "$2" | less && cv;;
+          *)cv;;
+        esac;;
+    esac
+  elif [[ -d "$1" ]]; then
+    op "$1" && cv;
+  fi
+}
+
+#this alias to edit a file with nano
+alias ed='nano "$1" && cv'
+
+# this alias to rename a file / directory; 
+# and then display it after
+alias nm='mv "$1" "$2" && cv'
+
+#this alias to copy files
+alias cpf="cpf"
+
+#this function for cpf alias
+function cpf(){
+  local copy_target=${2:-$dest}
+  cp "$@" "$copy_target" && op "$copy_target";
+}
+
+#this alias to move a file then display it
+alias mvf="mvf"
+
+#this function for mvf alias
+function mvf(){
+  local cut_target=${2:-$dest}
+  mv "$1" "$cut_target" && op "$cut_target";
+}
+
+#this alias to delete file/directory
+alias dlt=' rm -r "$@" && cv'
+
+#this alias to force delete
+alias rdf="rdf"
+
+#this function for rdf alias
+function rdf(){
+  c && br 2;
+  rm -rf "$@";
+  cv;
+}
+
+
+################################################
+
+# Section 4 : Shell configuration
+
+#this alias to custom the shell configuration file
+alias ct="ed ~/.$(basename $SHELL)rc && cv"
+
+#this alias to reload the shell configuration file
+alias rld="rld"
+
+#this function for rld alias
+function rld(){
+  clear;
+  source ~/.$(basename $SHELL)rc;
+  cat ~/.$(basename $SHELL)rc > ~/".$(basename $SHELL)rc[$USER].txt";
+  all ~/".$(basename $SHELL)rc[$USER].txt";
+  clear;
+  sleep 0.5;
+  cv;
+}
+
+
+################################################
+
+# Section 5 : Commands
+
+#this alias to view the command history
+alias hst="hst"
+
+#this function for hst alias
+function hst(){
+  if [[ $# -eq 0 ]]; then
+    history | less
+  else
+    re='^[0-9]+$'
+    if [[ $1 =~ $re ]]; then
+      #check if the argument is an integrer
+      history | tail -$1 | less
+    else  
+      #else if it's a text to grep
+      history | grep "$1" | less
+    fi
+    cv;
+  fi
+}
+
+# call the cv alias whenever a wrong 
+# command is typed which doesn't surely exist
+command_not_found_handler() {
+  local command=$1
+  local command_found=0
+
+  # Check if the command is found in the .zshrc file
+  if grep -q -E "^alias $command=" "$HOME/.zshrc" ; then
+    command_found=1
+  fi
+
+  if [[ $command_found -eq 0 ]]; then
+    c && br && echo "   c o m m a n d    n o t     f o u n d ";
+    br && sleep 0.5 && cv;
+  fi
+}
+
+
+################################################
+
+# Section 6 : Package manager
+
+#this alias to update the package
+alias upd="upd"
+
+#this function for up alias
+function upd(){
+  c && br 2;
+   clear && br 2;
+  echo "   u p d a t i n g .  .  .";
+  br && apt update && br;
+}
+
+#this alia to update the package
+alias upg="upg"
+
+#this function for up alias
+function upg(){
+  c && br 2;
+   clear && br 2;
+  echo "   u p g r a d i n g . . .";
+  br && apt upgrade && br;
+}
+
+#this alias to install packages
+alias ist="ist"
+
+#this function for ist alias
+function ist(){
+  c && br 2;
+   clear;
+  br 2;
+  echo "   I n s t a l l i n g .  .  . ";
+  br;
+  echo "Package =======> "${1%.*}" ";
+  br;
+  case "${1##*.}" in
+    deb)
+      dpkg -i "$1";;
+    *)
+      apt install "$1";;
+  esac
+  br;
+}
+
+#this alias to remove packages
+alias unist="unist"
+
+#this function for unist alias
+function unist(){
+  c && br 2;
+   clear;
+  br 2;
+  echo "   R e m o v i n g .  .  . ";
+  br;
+  echo "Package =======> "${1%.*}" ";
+  br;
+  case "${1##*.}" in
+    deb)
+      dpkg -r "$1";;
+    *)
+      apt remove "$1";;
+  esac
+  br;
+}
+
+
+################################################
+
+# Section 7 : Compile & Run
+
+#this alias to run an executable file or a script
+alias rn="rn"
+
+#this function for rn alias
+function rn(){
+  case "${1##*.}" in 
+    #this will look for the extension of the file
+    py)
+      all "$1";
+      c && br;
+      if [[ $# -eq 1 ]]; then
+        python "$1";
+      elif [[ $# -gt 1 ]]; then
+        python "$1" "$@";
+      fi
+      br;;
+    c || cpp) 
+      file="$1";
+      out="${file%.*}"
+
+      # Condition 1: Check if the file extension is c
+      extension='[[ "${file##*.}" == "c" ]]';
+
+      # Condition 2: Check if the file contains math library
+      math='grep -E "^#include <math.h>" "$file" >/dev/null';
+
+      # Ternary expressions to determine compiler and flags
+      compiler=$(eval "$extension" && echo "gcc" || echo "g++");
+      flags=$(eval "$math" && echo "-lm" || echo "");
+
+      # Check if an old executable exists
+      if [[ -f "$out" ]]; then
+        dlf "$out";
+      fi
+
+      # Compile the C file
+      "$compiler" "$file" -o "$out" $flags;
+
+      # Execute the resulting executable
+      all "$out";
+      clear && br;
+      ./"$out";
+      br;;
+    html)
+      google-chrome "$1" && cv;;
+    *)
+      all "$1" && c && ./"$1";;
+ esac
+}
+
+################################################
